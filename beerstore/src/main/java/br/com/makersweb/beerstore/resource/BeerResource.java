@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,8 +19,8 @@ public class BeerResource {
     private BeerRepository beerRepository;
 
     @GetMapping
-    public List<String> all() {
-        return Arrays.asList("Colorado Indica", "Stella Artois", "Brahma", "Skol");
+    public List<Beer> all() {
+        return beerRepository.findAll();
     }
 
     @PostMapping
