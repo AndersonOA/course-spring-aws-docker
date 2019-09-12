@@ -1,8 +1,10 @@
 package br.com.makersweb.beerstore.resource;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import br.com.makersweb.beerstore.model.Beer;
+import br.com.makersweb.beerstore.repository.BeerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,8 +16,17 @@ import java.util.List;
 @RequestMapping("/beers")
 public class BeerResource {
 
+    @Autowired
+    private BeerRepository beerRepository;
+
     @GetMapping
     public List<String> all() {
         return Arrays.asList("Colorado Indica", "Stella Artois", "Brahma", "Skol");
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Beer create(@RequestBody Beer beer) {
+        return beerRepository.save(beer);
     }
 }
