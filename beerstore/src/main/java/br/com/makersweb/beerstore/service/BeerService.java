@@ -21,12 +21,20 @@ public class BeerService {
     }
 
     public Beer save(final Beer beer) {
+        verifyIfBeerExists(beer);
+        return beerRepository.save(beer);
+    }
+
+    private void verifyIfBeerExists(final Beer beer) {
         Optional<Beer> beerByNameAndType = beerRepository.findByNameAndType(beer.getName(), beer.getType());
 
-        if (beerByNameAndType.isPresent()) {
+        if (beerByNameAndType.isPresent() && (beer.isNew() ||
+                isUpdatingToADifferentBeer(beer, beerByNameAndType))) {
             throw new BeerAlreadyExistException();
         }
+    }
 
-        return beerRepository.save(beer);
+    private boolean isUpdatingToADifferentBeer(Beer beer, Optional<Beer> beerByNameAndType) {
+        return beer.alreadyExist() && !beerByNameAndType.get().equals(beer);
     }
 }
