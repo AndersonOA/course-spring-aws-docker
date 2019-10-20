@@ -34,7 +34,7 @@ public class ApiExceptionHandler {
     private final MessageSource apiErrorMessageSource;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleNotValidException(MethodArgumentNotValidException exception
+    public ResponseEntity<ErrorResponse> handlerNotValidException(MethodArgumentNotValidException exception
             , Locale locale) {
         Stream<ObjectError> errors = exception.getBindingResult().getAllErrors().stream();
 
@@ -48,12 +48,21 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(InvalidFormatException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidFormatException(InvalidFormatException exception
+    public ResponseEntity<ErrorResponse> handlerInvalidFormatException(InvalidFormatException exception
             , Locale locale) {
         final String errorCode = "generic-1";
         final HttpStatus status = HttpStatus.BAD_REQUEST;
         final ErrorResponse errorResponse = ErrorResponse.of(status, toApiError(errorCode, locale, exception.getValue()));
         return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handlerException(Exception exception, Locale locale) {
+        LOG.error("Error not expected", exception);
+        final String errorCode = "error-1";
+        final HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        final ErrorResponse errorResponse = ErrorResponse.of(status, toApiError(errorCode, locale));
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     private ApiError toApiError(String code, Locale locale, Object... args) {
