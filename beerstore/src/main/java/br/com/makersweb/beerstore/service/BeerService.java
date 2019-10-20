@@ -3,9 +3,12 @@ package br.com.makersweb.beerstore.service;
 import br.com.makersweb.beerstore.model.Beer;
 import br.com.makersweb.beerstore.repository.BeerRepository;
 import br.com.makersweb.beerstore.service.exception.BeerAlreadyExistException;
+import br.com.makersweb.beerstore.service.exception.BeerNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 /**
@@ -36,5 +39,13 @@ public class BeerService {
 
     private boolean isUpdatingToADifferentBeer(Beer beer, Optional<Beer> beerByNameAndType) {
         return beer.alreadyExist() && !beerByNameAndType.get().equals(beer);
+    }
+
+    public void delete(final Long id) {
+        try {
+            beerRepository.deleteById(id);
+        } catch (EntityNotFoundException | EmptyResultDataAccessException e) {
+            throw new BeerNotFoundException();
+        }
     }
 }
