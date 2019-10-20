@@ -14,8 +14,11 @@ import java.util.Optional;
 @Service
 public class BeerService {
 
-    @Autowired
     private BeerRepository beerRepository;
+
+    public BeerService(@Autowired BeerRepository beerRepository) {
+        this.beerRepository = beerRepository;
+    }
 
     public Beer save(final Beer beer) {
         Optional<Beer> beerByNameAndType = beerRepository.findByNameAndType(beer.getName(), beer.getType());
